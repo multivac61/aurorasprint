@@ -260,7 +260,6 @@
     <h1>Aurora Sprint 2026</h1>
     <p class="subtitle">Making Nix the ideal platform to build, develop and test embedded Linux systems.</p>
     <div class="dates">February 23–27, 2026, the week before <a href="https://planetnix.com/">Planet Nix</a>.</div>
-    <p style="margin-top: 1.5rem;"><strong>Last call!</strong> The application deadline is January 11th—only a few days away. <a href="#application-form">Apply now.</a></p>
   </header>
 
   <section>
@@ -341,149 +340,14 @@
   </section>
 
   <section>
-    <h2>Apply</h2>
-    <div id="already-applied" class="hidden">
-      <p>You have already applied.</p>
-      <p>We received your application and will be in touch soon.</p>
-    </div>
-
-    <form id="application-form">
-      <div class="form-group">
-        <label for="fullName" class="required">Full Name</label>
-        <input type="text" id="fullName" name="fullName" required>
-      </div>
-
-      <div class="form-group">
-        <label for="email" class="required">Email</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <div class="form-group">
-        <label for="attendance" class="required">Are you planning to attend all days of the sprint?</label>
-        <select id="attendance" name="attending" required>
-          <option value="">Select...</option>
-          <option value="Yes, all days (Feb 23-27)">Yes, all days (Feb 23-27)</option>
-          <option value="Partial attendance">Partial attendance</option>
-          <option value="Not sure yet">Not sure yet</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="topics" class="required">What topics would you like to hack on?</label>
-        <textarea id="topics" name="topics" required></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="github" class="required">GitHub handle</label>
-        <input type="text" id="github" name="github" required>
-      </div>
-
-      <div class="form-group">
-        <label for="allergies">Any food allergies?</label>
-        <textarea id="allergies" name="dietary"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="contact" class="required">Your phone number or messenger handle</label>
-        <input type="text" id="contact" name="phone" required>
-        <small>Note: Needed in case of emergencies. If using a phone number, consider that you may replace your SIM card
-          in Iceland</small>
-      </div>
-
-      <button type="submit" id="submit-btn">Submit Application</button>
-    </form>
-    <div id="form-message" class="message hidden"></div>
+    <h2>Applications Closed</h2>
+    <p>Applications are now closed. All applicants will be notified on January 14th.</p>
   </section>
 
   <footer>
     <p>Aurora Sprint · Reykjavik, Iceland · 2025-26</p>
   </footer>
 
-  <script>
-    const form = document.getElementById('application-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const messageDiv = document.getElementById('form-message');
-    const alreadyAppliedDiv = document.getElementById('already-applied');
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSWfX9SMkWnHQ90ShOPBolPxYtyZJQbt7h2OP24ThBjecRGMvDSYyrGJoYTA4TP_5i6g/exec';
-    const STORAGE_KEY = 'embedded-nix-sprint-applied';
-
-    function showMessage(text, type) {
-      messageDiv.textContent = text;
-      messageDiv.className = `message ${type}`;
-      messageDiv.classList.remove('hidden');
-      messageDiv.scrollIntoView({behavior: 'smooth', block: 'center'});
-    }
-
-    function hideMessage() {
-      messageDiv.classList.add('hidden');
-    }
-
-    function showAlreadyApplied() {
-      form.classList.add('hidden');
-      alreadyAppliedDiv.classList.remove('hidden');
-    }
-
-    if (localStorage.getItem(STORAGE_KEY)) {
-      showAlreadyApplied();
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideMessage();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
-
-      const formData = new FormData(form);
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok || response.type === 'opaque' || response.redirected) {
-          let result;
-          if (response.type !== 'opaque') {
-            try {
-              result = await response.json();
-            } catch {
-              result = {status: 'success'};
-            }
-          } else {
-            result = {status: 'success', message: 'Application submitted successfully!'};
-          }
-
-          if (result.status === 'success') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-              email: formData.get('email'),
-              name: formData.get('fullName'),
-              date: new Date().toISOString()
-            }));
-            form.reset();
-            form.classList.add('hidden');
-            showMessage(result.message || 'Application submitted successfully! We will be in touch.', 'success');
-          } else if (result.status === 'info') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-              email: formData.get('email'),
-              date: new Date().toISOString()
-            }));
-            form.classList.add('hidden');
-            showMessage(result.message || 'You have already applied.', 'info');
-          } else {
-            showMessage(result.message || 'Submission failed. Please try again.', 'error');
-          }
-        } else {
-          showMessage(`Error: ${response.statusText || 'Could not connect to the server.'}`, 'error');
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        showMessage('An unexpected error occurred. Please try again.', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Application';
-      }
-    });
-  </script>
 </body>
 
 </html>
